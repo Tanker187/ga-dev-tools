@@ -157,8 +157,13 @@ const useShortenLink: UseShortLink = () => {
 
   const shorten = React.useCallback(
     async (longLink: string) => {
-      if (longLink.startsWith("https://bit.ly")) {
-        throw new Error("Cannot shorten a shortlink")
+      try {
+        const url = new URL(longLink)
+        if (url.hostname === "bit.ly") {
+          throw new Error("Cannot shorten a shortlink")
+        }
+      } catch {
+        // If the URL is invalid, fall through and let subsequent validation handle it.
       }
       if (longLink === "") {
         throw new Error("Cannot shorten an empty string")
